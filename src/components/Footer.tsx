@@ -1,29 +1,28 @@
-import React from "react";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
 
-interface Props {}
-interface States {}
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="#">
-        Rafael Lohmann
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-export default class Footer extends React.Component<Props, States> {
-  render(): React.ReactElement<any> {
-    return (
-      <footer>
-        <Copyright />
-      </footer>
-    );
+const useStyles = makeStyles(theme => ({
+  footer: {
+    padding: theme.spacing(3)
   }
+}))
+
+const Footer: React.FC = () => {
+  const classes = useStyles()
+  return (
+    <footer className={classes.footer}>
+      <Typography variant="body2" color="textSecondary" align="center">
+        {'Copyright © '}
+        <Link color="inherit" href="#">
+          Rafael Lohmann
+        </Link>{' '}
+        {new Date().getFullYear()}
+        {'.'}
+      </Typography>
+    </footer>
+  )
 }
+
+export default Footer
