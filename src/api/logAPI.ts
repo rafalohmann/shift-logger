@@ -1,4 +1,7 @@
 import axios from 'axios'
+import sleep from "../utils/sleep";
+
+const TEST_FOR_LOADING: boolean = false
 
 export interface Log {
   id: number
@@ -10,7 +13,7 @@ export interface Log {
   comment: string
 }
 
-export interface LogsResult {
+export interface LogListResult {
   data: Log[]
   pagination: {
     page: number
@@ -20,20 +23,24 @@ export interface LogsResult {
   }
 }
 
-export async function getLogs(
+export async function getLogList(
   page = 1,
   pageSize = 10
-): Promise<LogsResult> {
+): Promise<LogListResult> {
+  if (TEST_FOR_LOADING) {
+    await sleep(2000)
+  }
+
   const url = `http://localhost:3001/log`
 
   try {
-    const { data } = await axios.get<LogsResult>(url, {
+    const { data } = await axios.get<LogListResult>(url, {
       params: {
         page,
         pageSize
       }
     })
-    return data;
+    return data
   } catch (err) {
     throw err
   }

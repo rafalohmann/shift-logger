@@ -1,9 +1,9 @@
 import { combineReducers } from '@reduxjs/toolkit'
 
-import LogsListReducer from 'features/logsList/logsListSlice'
+import LogListReducer from 'features/log/log-list/logListSlice'
 
 const rootReducer = combineReducers({
-  LogsList: LogsListReducer
+  Log: LogListReducer
 })
 
 export type RootState = ReturnType<typeof rootReducer>

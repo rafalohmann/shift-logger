@@ -6,10 +6,11 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
+import Container from '@material-ui/core/Container'
 
-import { LogsListPage } from 'features/logsList/LogsListPage'
+import { LogPage } from 'features/log/LogPage'
 
-const useStyles = makeStyles(theme => ({
+const styles = makeStyles(theme => ({
   appBar: {
     position: 'relative',
     marginBottom: theme.spacing(3)
@@ -17,19 +18,21 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const App: React.FC = () => {
-  const classes = useStyles()
+  const classes = styles()
   return (
     <div>
       <CssBaseline />
-      <AppBar position="absolute" color="default" className={classes.appBar}>
+      <AppBar position="absolute" color="primary" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
             Shift Logger
           </Typography>
         </Toolbar>
       </AppBar>
-      <LogsListPage />
-      <Footer />
+      <Container maxWidth="md">
+        <LogPage />
+        <Footer />
+      </Container>
     </div>
   )
 }
