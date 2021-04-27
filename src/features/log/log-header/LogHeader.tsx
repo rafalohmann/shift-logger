@@ -1,8 +1,12 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { makeStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+
+import { Log } from 'api/logAPI'
+import { setLog } from '../LogSlice'
 
 const styles = makeStyles(theme => ({
   paper: {
@@ -17,9 +21,10 @@ const styles = makeStyles(theme => ({
 
 export const LogHeader = () => {
   const classes = styles()
+  const dispatch = useDispatch()
 
-  const handleNew = () => {
-    console.log('"handleNew" clicked')
+  const handleAdd = () => {
+    dispatch(setLog({ status: true } as Log))
   }
 
   return (
@@ -28,11 +33,12 @@ export const LogHeader = () => {
         Logs
       </Typography>
       <Button
+        size="small"
         variant="contained"
         color="primary"
-        onClick={handleNew}
+        onClick={handleAdd}
       >
-        New log
+        Add
       </Button>
     </Paper>
   )

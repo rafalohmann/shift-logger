@@ -25,11 +25,11 @@ const App: React.FC = () => {
       <AppBar position="absolute" color="primary" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
-            Shift Logger
+            Shift Logs
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container maxWidth="md">
+      <Container maxWidth="lg">
         <LogPage />
         <Footer />
       </Container>
