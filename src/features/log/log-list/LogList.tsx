@@ -166,14 +166,9 @@ export const LogList = () => {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
-                colSpan={3}
                 count={rowCount}
                 rowsPerPage={pageSize}
                 page={pageIndex}
-                SelectProps={{
-                  inputProps: { 'aria-label': 'rows per page' },
-                  native: true
-                }}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
               />

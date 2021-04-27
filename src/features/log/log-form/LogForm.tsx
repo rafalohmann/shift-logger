@@ -4,7 +4,12 @@ import * as yup from 'yup'
 import { cloneDeep } from 'lodash'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from 'app/rootReducer'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  withStyles
+} from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import InputLabel from '@material-ui/core/InputLabel'
 import TextField from '@material-ui/core/TextField'
@@ -14,15 +19,15 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogActions from '@material-ui/core/DialogActions'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
 import Typography from '@material-ui/core/Typography'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
+import { red } from '@material-ui/core/colors'
 import moment from 'moment'
 
-import { clear, createUpdateLog } from '../LogSlice'
+import { clear, createUpdateLog, deleteLog } from '../LogSlice'
 import { Log } from 'api/logAPI'
 
 const validationSchema = yup.object({
@@ -42,11 +47,10 @@ const styles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(2),
       marginTop: 0
     },
-    closeButton: {
+    saveButton: {
       position: 'absolute',
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-      color: theme.palette.grey[500]
+      right: theme.spacing(2),
+      top: theme.spacing(1.5)
     }
   })
 )
@@ -55,23 +59,31 @@ export const LogForm = () => {
   const classes = styles()
   const dispatch = useDispatch()
 
+  const [confirmDelete, setConfirmDelete] = React.useState(false)
   const { log } = useSelector((state: RootState) => state.Log)
+
+  const formValues = { ...cloneDeep(log) }
+
+  let { id, status, event_date, area, machine, operator, comment } = formValues
 
   const handleClose = () => {
     dispatch(clear())
   }
 
-  const formValues = { ...cloneDeep(log) }
+  const handleDeleteClick = () => {
+    setConfirmDelete(true)
+  }
 
-  let {
-    id,
-    status,
-    event_date,
-    area,
-    machine,
-    operator,
-    comment
-  } = formValues
+  const handleCancelDeleteClick = () => {
+    setConfirmDelete(false)
+  }
+
+  const handleConfirmDeleteClick = () => {
+    setConfirmDelete(false)
+    if (id) {
+      dispatch(deleteLog(id))
+    }
+  }
 
   const formattedEventDate = moment(event_date).format('YYYY-MM-DD[T]hh:mm')
   status = status ? true : false
@@ -97,19 +109,31 @@ export const LogForm = () => {
     }
   })
 
+  const DeleteButton = withStyles((theme: Theme) => ({
+    root: {
+      color: theme.palette.getContrastText(red[500]),
+      backgroundColor: red[500],
+      '&:hover': {
+        backgroundColor: red[700]
+      }
+    }
+  }))(Button)
+
   return (
     <Dialog aria-labelledby="form-dialog-title" open={true}>
-      <DialogTitle id="form-dialog-title">
-        <Typography>Subscribe</Typography>
-        <IconButton
-          aria-label="close"
-          className={classes.closeButton}
-          onClick={handleClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
       <form onSubmit={formik.handleSubmit}>
+        <DialogTitle id="form-dialog-title">
+          <Typography>{id ? 'Edit Shift Log' : 'Add Shift Log'}</Typography>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            type="submit"
+            className={classes.saveButton}
+          >
+            Save
+          </Button>
+        </DialogTitle>
         <DialogContent dividers>
           <TextField
             fullWidth
@@ -177,9 +201,6 @@ export const LogForm = () => {
             helperText={formik.touched.operator && formik.errors.operator}
             className={classes.formElements}
           />
-
-          
-
           <TextField
             fullWidth
             id="comment"
@@ -191,7 +212,6 @@ export const LogForm = () => {
             helperText={formik.touched.comment && formik.errors.comment}
             className={classes.formElements}
           />
-
           <FormControlLabel
             control={
               <Checkbox
@@ -205,9 +225,57 @@ export const LogForm = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button color="primary" variant="contained" fullWidth type="submit">
-            Save
+          <Button
+            size="small"
+            color="default"
+            variant="contained"
+            onClick={handleClose}
+          >
+            Close
           </Button>
+          {id ? (
+            <>
+              <DeleteButton
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={handleDeleteClick}
+              >
+                Delete
+              </DeleteButton>
+              <Dialog
+                open={confirmDelete}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  Delete Shift Log
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to delete the Shift Log?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={handleCancelDeleteClick}
+                  >
+                    Cancel
+                  </Button>
+                  <DeleteButton
+                    size="small"
+                    onClick={handleConfirmDeleteClick}
+                    color="primary"
+                    autoFocus
+                  >
+                    Yes
+                  </DeleteButton>
+                </DialogActions>
+              </Dialog>
+            </>
+          ) : null}
         </DialogActions>
       </form>
     </Dialog>

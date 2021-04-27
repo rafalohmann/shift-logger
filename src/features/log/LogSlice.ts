@@ -6,7 +6,8 @@ import {
   LogListResult,
   getLog,
   createLog,
-  updateLog
+  updateLog,
+  deleteLog as deleteLogApi
 } from 'api/logAPI'
 import { AppThunk } from 'app/store'
 
@@ -85,17 +86,24 @@ const LogReducer = createSlice({
     },
     getLogFailure: loadingFailed,
     createUpdateLogStart: startLoading,
-    createLogSuccess(state, { payload }: PayloadAction<Log>) {
+    createLogSuccess(state) {
       state.log = null
       state.isLoading = false
       state.error = null
     },
-    updateLogSuccess(state, { payload }: PayloadAction<Log>) {
+    updateLogSuccess(state) {
       state.log = null
       state.isLoading = false
       state.error = null
     },
-    createUpdateLogFailure: loadingFailed
+    createUpdateLogFailure: loadingFailed,
+    deleteLogStart: startLoading,
+    deleteLogSuccess(state) {
+      state.log = null
+      state.isLoading = false
+      state.error = null
+    },
+    deleteLogFailure: loadingFailed
   }
 })
 
@@ -114,7 +122,10 @@ export const {
   createUpdateLogStart,
   createLogSuccess,
   updateLogSuccess,
-  createUpdateLogFailure
+  createUpdateLogFailure,
+  deleteLogStart,
+  deleteLogSuccess,
+  deleteLogFailure
 } = LogReducer.actions
 
 export default LogReducer.reducer
@@ -151,12 +162,12 @@ export const createUpdateLog = ({
   operator,
   comment
 }: Log): AppThunk => async (dispatch, getState) => {
-  const { page, pageSize } = getState().Log;
+  const { page, pageSize } = getState().Log
   try {
     dispatch(createUpdateLogStart())
 
     if (id > 0) {
-      const log = await updateLog({
+      await updateLog({
         id,
         status,
         event_date,
@@ -165,11 +176,11 @@ export const createUpdateLog = ({
         operator,
         comment
       })
-      dispatch(createLogSuccess(log))
+      dispatch(createLogSuccess())
       const LogList = await getLogList(page, pageSize)
       dispatch(getLogListSuccess(LogList))
     } else {
-      const log = await createLog({
+      await createLog({
         status,
         event_date,
         area,
@@ -177,11 +188,27 @@ export const createUpdateLog = ({
         operator,
         comment
       })
-      dispatch(updateLogSuccess(log))
+      dispatch(updateLogSuccess())
       const LogList = await getLogList(1, pageSize)
       dispatch(getLogListSuccess(LogList))
     }
   } catch (err) {
     dispatch(createUpdateLogFailure(err.toString()))
+  }
+}
+
+export const deleteLog = (id: number): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  try {
+    dispatch(deleteLogStart())
+    await deleteLogApi(id)
+    dispatch(deleteLogSuccess())
+    const { pageSize } = getState().Log
+    const LogList = await getLogList(1, pageSize)
+    dispatch(getLogListSuccess(LogList))
+  } catch (err) {
+    dispatch(deleteLogFailure(err.toString()))
   }
 }

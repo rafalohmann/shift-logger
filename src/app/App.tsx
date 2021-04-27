@@ -24,7 +24,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <AppBar position="absolute" color="primary" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
+          <Typography variant="h5" color="inherit" noWrap>
             Shift Logs
           </Typography>
         </Toolbar>

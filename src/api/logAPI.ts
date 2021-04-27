@@ -1,7 +1,7 @@
 import axios from 'axios'
 import sleep from '../utils/sleep'
 
-const TEST_FOR_LOADING: boolean = true
+const TEST_FOR_LOADING: boolean = false
 
 const url: string = `http://localhost:3001/log`
 
@@ -54,10 +54,10 @@ export async function updateLog(log: Log) {
   return data
 }
 
-export async function deleteLog(log: Log) {
+export async function deleteLog(id: number) {
   if (TEST_FOR_LOADING) await sleep(2000)
 
-  await axios.delete(`${url}/${log.id}`)
+  await axios.delete(`${url}/${id}`)
 }
 
 export async function getLog(id: number): Promise<Log> {
