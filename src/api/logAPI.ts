@@ -3,7 +3,8 @@ import sleep from '../utils/sleep'
 
 const TEST_FOR_LOADING: boolean = false
 
-const url: string = `http://localhost:3001/log`
+// const url: string = `http://localhost:3001/api/logs`
+const url: string = `/api/logs`
 
 export interface Log {
   id: number
